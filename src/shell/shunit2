@@ -1018,7 +1018,9 @@ _shunit_execSuite()
     endSkipping
 
     # execute the per-test setup function
-    setUp
+    if [[ $(type -t setUp) == function ]]; then
+      setUp
+    fi
 
     # store the test case execution start time
     _shunit_case_starttime_=$(date '+%s.%N')
@@ -1042,7 +1044,9 @@ _shunit_execSuite()
     fi
 
     # execute the per-test tear-down function
-    tearDown
+    if [[ $(type -t tearDown) == function ]]; then
+      tearDown
+    fi
 
     # update stats
     if [ ${__shunit_testSuccess} -eq ${SHUNIT_TRUE} ]; then
@@ -1150,11 +1154,16 @@ _shunit_mktempFunc
 PATH="${__shunit_tmpDir}:${PATH}"
 
 # execute the oneTimeSetUp function (if it exists)
-oneTimeSetUp
+if [[ $(type -t oneTimeSetUp) == function ]]; then
+  oneTimeSetUp
+fi
+
 
 # execute the suite function defined in the parent test script
 # deprecated as of 2.1.0
-suite
+if [[ $(type -t suite) == function ]]; then
+  suite
+fi
 
 # if no suite function was defined, dynamically build a list of functions
 if [ -z "${__shunit_suite}" ]; then
@@ -1184,7 +1193,9 @@ __shunit_suite_endtime=$(date '+%s.%N')
 __shunit_suite_duration=$(echo ${__shunit_suite_endtime} - ${__shunit_suite_starttime} | bc)
 
 # execute the oneTimeTearDown function (if it exists)
-oneTimeTearDown
+if [[ $(type -t oneTimeTearDown) == function ]]; then
+  oneTimeTearDown
+fi
 
 # generate the report
 if [ -n "${SHUNIT_OUTPUTDIR}" ]
